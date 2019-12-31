@@ -1,8 +1,12 @@
-channels/
-models/
-users/
+channels/*
+models/*
+users/*
 config.py
 .DS_Store
+
+!channels/.gitkeep
+!models/.gitkeep
+!users/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
