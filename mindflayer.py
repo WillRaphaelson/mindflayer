@@ -164,7 +164,7 @@ def review_posts(candidate_posts):
 
 
 def post(env, post_user, post_text):
-    print("Posting to channel)
+    print("Posting to channel")
     sc = slackclient.SlackClient(SLACK_BOT_TOKEN)
     message_text = "*{}*\n{}".format(post_user, post_text)
     message_color = "#{}".format(hex(random.randint(0, 0xffffff))[2:])
