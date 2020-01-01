@@ -19,7 +19,7 @@ A `config.py` file in the top level directory will provide key environmental var
 ```
 SLACK_BOT_TOKEN = "xxxx-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
 SLACK_APP_TOKEN = "xxxx-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-TEST_ENV = "CRUT73Z51"
+TEST_ENV = "GS6CFBN5N"
 PROD_ENV = "CBHJ17SVC"
 ```
 
