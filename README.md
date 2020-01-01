@@ -26,6 +26,7 @@ PROD_ENV = "CBHJ17SVC"
 ### subdirectories
 Subdirectory structure and contents are important:
 
+```
   .
   ├── ...
   ├── channels               # csv files of channel histories
@@ -38,6 +39,7 @@ Subdirectory structure and contents are important:
   │   ├── U001.json         
   │   └── ...
   └── ...
+```
 
 
 ## Usage
