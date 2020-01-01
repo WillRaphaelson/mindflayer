@@ -167,13 +167,18 @@ def review_posts(candidate_posts):
             print(candidate_posts[post][0])
             print(candidate_posts[post][1])
             reply = str(input("accept and post? (y/n): ")).lower().strip()
-            if reply[0] == 'y':
-                post_user = candidate_posts[post][0]
-                post_text = candidate_posts[post][1]
+            try:
+                if reply[0] == 'y':
+                    post_user = candidate_posts[post][0]
+                    post_text = candidate_posts[post][1]
+                    print("\n")
+                    return post_user, post_text
+                else:
+                    print("\n")
+            except IndexError as e:
                 print("\n")
-                return post_user, post_text
-            if reply[0] == 'n':
-                print("\n")
+                pass
+
 
 
 
