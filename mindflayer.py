@@ -132,9 +132,12 @@ def create_markov_models(users):
 #     except Exception as e:
 #         print(e)
 
-def make_sentences(users):
+def make_sentences(users, user=None):
     print("Generating candidate posts")
-    models = [f"{user}.json" for user in users.keys()]
+    if not user:
+        models = [f"{user}.json" for user in users.keys()]
+    else:
+        models = [f"{user}.json"]
     # models = os.listdir("models")
     potench = {}
     no_models_list = []
@@ -201,6 +204,7 @@ def main():
 
     parser_post = subparser.add_parser("post")
     parser_post.add_argument('-e','--env', help='test or prod', required=True, choices=['test', 'prod'])
+    parser_post.add_argument('-u','--user', help='specific user id', required=False, default=None)
 
     args = vars(parser.parse_args())
 
@@ -217,11 +221,12 @@ def main():
 
     if args["command"] == "post":
         env = args['env']
+        user = args['user']
         if env == 'test':
             slack_chan = TEST_ENV
         if env == 'prod':
             slack_chan = PROD_ENV
-        candidates = make_sentences(users=users)
+        candidates = make_sentences(users=users, user=user)
         chosen_post_user, chosen_post_text = review_posts(candidate_posts=candidates)
         post(env=slack_chan, post_user=chosen_post_user, post_text=chosen_post_text)
 

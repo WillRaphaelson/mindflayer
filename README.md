@@ -54,7 +54,14 @@ The `post` command will surface randomly generated sentences, and prompt for pos
 ```
 python mindflayer.py post --env test
 Review Posts:
+
 Will Arr
 Thank you for the Software Engineering Intern interviews
 accept and post? (y/n):
+```
+
+To generate and post sentences for a specific user, provide the optional `--user` argument followed by a users slack ID
+
+```
+python mindflayer.py post --env test --user UBGGK785R
 ```
