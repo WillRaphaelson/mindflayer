@@ -37,24 +37,31 @@ def scrape_channels(channels, n=7):
     sc = slackclient.SlackClient(SLACK_APP_TOKEN)
     oldest = datetime.datetime.now() - datetime.timedelta(days=int(n))
     oldest = datetime.datetime.timestamp(oldest)
+    no_messages_list = []
     for channel in channels:
         try:
-            print(f"Ingesting {channel[1]}")
+            # print(f"Ingesting {channel[1]}")
             # grab and make unique
             h = sc.api_call("channels.history", channel = channel[0], oldest = oldest)["messages"]
-            if len(h) > 0:
-                d = pd.DataFrame.from_dict(h)
-                d = d[["user","text"]]
-                with open(f"channels/{channel[1]}.csv", 'a') as f:
-                    d.to_csv(f"channels/{channel[1]}.csv", mode='a', quoting=csv.QUOTE_NONNUMERIC, index=False, header=f.tell()==0)
-        except Exception as e:
-            print(e)
-            pass
+            d = pd.DataFrame.from_dict(h)
+            d = d[["user","text"]]
+            with open(f"channels/{channel[1]}.csv", 'a') as f:
+                d.to_csv(f"channels/{channel[1]}.csv", mode='a', quoting=csv.QUOTE_NONNUMERIC, index=False, header=f.tell()==0)
+            num_messages = len(h)
+            print(f"{num_messages} ingested for {channel[1]}")
+        except KeyError as e:
+            no_messages_list.append(channel[1])
+    print("No messages found for:")
+    print(no_messages_list)
+    print("\n")
+
+
 
 
 def dedupe_channel_histories(channels):
-    print("Deduping channel histories")
+    print("Deduping channel corpora")
     channels = os.listdir("channels")
+    channels = [x for x in channels if x[0] != "."]
     for channel in channels:
         try:
             c = pd.read_csv(f"channels/{channel}")
@@ -66,7 +73,7 @@ def dedupe_channel_histories(channels):
 
 
 def truncate_user_histories(users):
-    print("Truncating user histories")
+    print("Truncating user corpora")
     for user in users.keys():
         try:
             with open(f"users/{users[user]}_{user}.txt", "w", encoding="utf-8") as f:
@@ -76,8 +83,9 @@ def truncate_user_histories(users):
 
 
 def populate_user_histories(users):
-    print("Populating user histories")
+    print("Populating user corpora")
     channels = os.listdir("channels")
+    channels = [x for x in channels if x[0] != "."]
     for channel in channels:
         try:
             c = pd.read_csv(f"channels/{channel}")
@@ -159,13 +167,16 @@ def review_posts(candidate_posts):
             if reply[0] == 'y':
                 post_user = candidate_posts[post][0]
                 post_text = candidate_posts[post][1]
+                print("\n")
                 return post_user, post_text
             if reply[0] == 'n':
-                pass
+                print("\n")
+
 
 
 def post(env, post_user, post_text):
     print("Posting to channel")
+    print("Response:")
     sc = slackclient.SlackClient(SLACK_BOT_TOKEN)
     message_text = "*{}*\n{}".format(post_user, post_text)
     message_color = "#{}".format(hex(random.randint(0, 0xffffff))[2:])
@@ -194,11 +205,10 @@ def main():
     args = vars(parser.parse_args())
 
     users = get_users()
-    channels = get_channels()
-
 
     if args["command"] == "train":
         num_days_back = args['num']
+        channels = get_channels()
         scrape_channels(channels=channels ,n=num_days_back)
         dedupe_channel_histories(channels=channels)
         truncate_user_histories(users=users)
