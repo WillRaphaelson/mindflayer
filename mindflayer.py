@@ -17,7 +17,7 @@ TEST_ENV = config.TEST_ENV
 PROD_ENV = config.PROD_ENV
 
 def get_users():
-    print("Getting active user list")
+    # print("Getting active user list")
     sc = slackclient.SlackClient(SLACK_BOT_TOKEN)
     r = sc.api_call("users.list")["members"]
     users = {x["id"]:re.sub(r'([^\s\w]|_)+', '', x["profile"]["real_name"]) for x in r if not x["deleted"]}
@@ -196,6 +196,10 @@ def post(env, post_user, post_text):
 
 
 def main():
+    users = get_users()
+    user_id_help = "\n".join([f"{x}: {v}" for v,x in users.items()])
+    user_id_help = "Takes a user id from the following list: \n" + user_id_help
+
     parser = argparse.ArgumentParser(description='the upside down')
     subparser = parser.add_subparsers(dest="command")
 
@@ -204,11 +208,9 @@ def main():
 
     parser_post = subparser.add_parser("post")
     parser_post.add_argument('-e','--env', help='test or prod', required=True, choices=['test', 'prod'])
-    parser_post.add_argument('-u','--user', help='specific user id', required=False, default=None)
+    parser_post.add_argument('-u','--user', help=user_id_help, required=False, default=None)
 
     args = vars(parser.parse_args())
-
-    users = get_users()
 
     if args["command"] == "train":
         num_days_back = args['num']
