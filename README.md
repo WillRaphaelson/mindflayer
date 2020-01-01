@@ -14,7 +14,7 @@ pip install -r requirements.txt
 The following files cannot be checked in to git for privacy and security reasons. Contact the maintainers for access.
 
 ### config.py
-A `config.py` file in the top level directory will provide key environmental variables:
+A `config.py` file in the top level directory will provide key configuration variables:
 
 ```
 SLACK_BOT_TOKEN = "xxxx-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
