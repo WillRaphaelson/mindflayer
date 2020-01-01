@@ -17,21 +17,23 @@ TEST_ENV = config.TEST_ENV
 PROD_ENV = config.PROD_ENV
 
 def get_users():
+    print("Getting active user list")
     sc = slackclient.SlackClient(SLACK_BOT_TOKEN)
     r = sc.api_call("users.list")["members"]
     users = {x["id"]:re.sub(r'([^\s\w]|_)+', '', x["profile"]["real_name"]) for x in r if not x["deleted"]}
     return users
 
+
 def get_channels():
+    print("Getting public channel list")
     sc = slackclient.SlackClient(SLACK_BOT_TOKEN)
     raw_channel_list = sc.api_call("channels.list")
     channels = [(x["id"], x["name"]) for x in raw_channel_list["channels"] if not x["is_archived"]]
     return channels
 
 
-
 def scrape_channels(channels, n=7):
-    print(f"scraping last {n} days")
+    print(f"Scraping last {n} days")
     sc = slackclient.SlackClient(SLACK_APP_TOKEN)
     oldest = datetime.datetime.now() - datetime.timedelta(days=int(n))
     oldest = datetime.datetime.timestamp(oldest)
@@ -50,7 +52,7 @@ def scrape_channels(channels, n=7):
 
 
 def dedupe_channel_histories(channels):
-    print("deduping channel histories")
+    print("Deduping channel histories")
     channels = os.listdir("channels")
     for channel in channels:
         try:
@@ -61,8 +63,9 @@ def dedupe_channel_histories(channels):
             print(channel)
             print(e)
 
+
 def truncate_user_histories(users):
-    print("truncating user histories")
+    print("Truncating user histories")
     for user in users.keys():
         try:
             with open(f"users/{users[user]}_{user}.txt", "w", encoding="utf-8") as f:
@@ -70,8 +73,9 @@ def truncate_user_histories(users):
         except Exception as e:
             print(e)
 
+
 def populate_user_histories(users):
-    print("populating user histories")
+    print("Populating user histories")
     channels = os.listdir("channels")
     for channel in channels:
         try:
@@ -86,8 +90,9 @@ def populate_user_histories(users):
         except Exception as e:
             print(channel, e)
 
+
 def create_markov_models(users):
-    print("building markov models")
+    print("Building markov models")
     for user in users.keys():
         try:
             with open(f"users/{users[user]}_{user}.txt", encoding="utf-8") as f:
@@ -119,10 +124,11 @@ def create_markov_models(users):
 #         print(e)
 
 def make_sentences(users):
-    print("generating candidate posts")
+    print("Generating candidate posts")
     models = [f"{user}.json" for user in users.keys()]
     # models = os.listdir("models")
     potench = {}
+    no_models_list = []
     for i in range(1000):
         model_name = random.choice(models)
         user_full = users[model_name.split(".")[0]]
@@ -134,14 +140,20 @@ def make_sentences(users):
                 if sentance:
                     potench[i] = [user_full, sentance]
         except Exception as e:
-            print(e, user_full)
+            no_models_list.append(user_full)
             pass
+    print("No models found for:")
+    print(list(set(no_models_list)))
+    print("\n")
     return potench
 
+
 def review_posts(candidate_posts):
+    print("Review Posts:")
     while True:
         for post in candidate_posts:
-            print(candidate_posts[post][0],"\n", candidate_posts[post][1])
+            print(candidate_posts[post][0])
+            print(candidate_posts[post][1])
             reply = str(input("accept and post? (y/n): ")).lower().strip()
             if reply[0] == 'y':
                 post_user = candidate_posts[post][0]
@@ -150,7 +162,9 @@ def review_posts(candidate_posts):
             if reply[0] == 'n':
                 pass
 
+
 def post(env, post_user, post_text):
+    print("Posting to channel)
     sc = slackclient.SlackClient(SLACK_BOT_TOKEN)
     message_text = "*{}*\n{}".format(post_user, post_text)
     message_color = "#{}".format(hex(random.randint(0, 0xffffff))[2:])

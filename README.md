@@ -43,7 +43,7 @@ Subdirectory structure and contents are important:
 
 
 ## Usage
-The `train` command will scrape, parse, and train new models based on data from the last `n` days.
+The `train` command will scrape, parse, and train new models based on data from the last `num` days.
 
 ```
 python mindflayer.py train --num 1
@@ -53,4 +53,8 @@ The `post` command will surface randomly generated sentences, and prompt for pos
 
 ```
 python mindflayer.py post --env test
+Review Posts:
+Will Arr
+Thank you for the Software Engineering Intern interviews
+accept and post? (y/n):
 ```
