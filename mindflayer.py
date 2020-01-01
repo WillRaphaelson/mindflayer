@@ -168,27 +168,37 @@ def post(env, post_user, post_text):
 
 def main():
     parser = argparse.ArgumentParser(description='the upside down')
-    parser.add_argument('-n','--num', help='num days back to train', required=True, choices=['1','2','3','4','5','6','7'])
-    parser.add_argument('-e','--env', help='test or prod', required=True, choices=['test', 'prod'])
-    args = vars(parser.parse_args())
+    subparser = parser.add_subparsers(dest="command")
 
-    num_days_back = args['num']
-    env = args['env']
-    if env == 'test':
-        slack_chan = TEST_ENV
-    if env == 'prod':
-        slack_chan = PROD_ENV
+    parser_train = subparser.add_parser("train")
+    parser_train.add_argument('-n','--num', help='num days back to train', required=True, choices=['1','2','3','4','5','6','7'])
+
+    parser_post = subparser.add_parser("post")
+    parser_post.add_argument('-e','--env', help='test or prod', required=True, choices=['test', 'prod'])
+
+    args = vars(parser.parse_args())
 
     users = get_users()
     channels = get_channels()
-    scrape_channels(channels=channels ,n=num_days_back)
-    dedupe_channel_histories(channels=channels)
-    truncate_user_histories(users=users)
-    populate_user_histories(users=users)
-    create_markov_models(users=users)
-    candidates = make_sentences(users=users)
-    chosen_post_user, chosen_post_text = review_posts(candidate_posts=candidates)
-    post(env=slack_chan, post_user=chosen_post_user, post_text=chosen_post_text)
+
+
+    if args["command"] == "train":
+        num_days_back = args['num']
+        scrape_channels(channels=channels ,n=num_days_back)
+        dedupe_channel_histories(channels=channels)
+        truncate_user_histories(users=users)
+        populate_user_histories(users=users)
+        create_markov_models(users=users)
+
+    if args["command"] == "post":
+        env = args['env']
+        if env == 'test':
+            slack_chan = TEST_ENV
+        if env == 'prod':
+            slack_chan = PROD_ENV
+        candidates = make_sentences(users=users)
+        chosen_post_user, chosen_post_text = review_posts(candidate_posts=candidates)
+        post(env=slack_chan, post_user=chosen_post_user, post_text=chosen_post_text)
 
 
 if __name__ == '__main__':
