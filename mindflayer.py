@@ -39,15 +39,16 @@ def scrape_channels(channels, n=7):
     oldest = datetime.datetime.timestamp(oldest)
     for channel in channels:
         try:
+            print(f"Ingesting {channel[1]}")
             # grab and make unique
             h = sc.api_call("channels.history", channel = channel[0], oldest = oldest)["messages"]
             if len(h) > 0:
-                print(f"ingesting {channel[1]}")
                 d = pd.DataFrame.from_dict(h)
                 d = d[["user","text"]]
                 with open(f"channels/{channel[1]}.csv", 'a') as f:
                     d.to_csv(f"channels/{channel[1]}.csv", mode='a', quoting=csv.QUOTE_NONNUMERIC, index=False, header=f.tell()==0)
-        except:
+        except Exception as e:
+            print(e)
             pass
 
 
