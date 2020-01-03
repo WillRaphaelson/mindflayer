@@ -9,6 +9,7 @@ import pickle
 import datetime
 import argparse
 import csv
+import sys
 
 import config
 SLACK_BOT_TOKEN = config.SLACK_BOT_TOKEN
@@ -161,25 +162,27 @@ def make_sentences(users, user=None):
 
 
 def review_posts(candidate_posts):
-    print("Review Posts:")
-    while True:
-        for post in candidate_posts:
-            print(candidate_posts[post][0])
-            print(candidate_posts[post][1])
-            reply = str(input("accept and post? (y/n): ")).lower().strip()
-            try:
-                if reply[0] == 'y':
-                    post_user = candidate_posts[post][0]
-                    post_text = candidate_posts[post][1]
+    if len(candidate_posts) > 0:
+        print("Review Posts:")
+        while True:
+            for post in candidate_posts:
+                print(candidate_posts[post][0])
+                print(candidate_posts[post][1])
+                reply = str(input("accept and post? (y/n): ")).lower().strip()
+                try:
+                    if reply[0] == 'y':
+                        post_user = candidate_posts[post][0]
+                        post_text = candidate_posts[post][1]
+                        print("\n")
+                        return post_user, post_text
+                    else:
+                        print("\n")
+                except IndexError as e:
                     print("\n")
-                    return post_user, post_text
-                else:
-                    print("\n")
-            except IndexError as e:
-                print("\n")
-                pass
-
-
+                    pass
+    else:
+        print("Corpus too small to generate sentences, try another user.")
+        sys.exit()
 
 
 def post(env, post_user, post_text):
