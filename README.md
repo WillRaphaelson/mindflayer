@@ -3,6 +3,8 @@
 
 The Mind Flayer, also known as the Shadow Monster, is a malevolent entity that rules the parallel dimension known as the Upside Down.
 
+This code trains markov models on your organizations public slack messages and provides a simple CLI for posting to a channel.
+
 ## Installation
 ```
 git clone git@github.com:WillRaphaelson/mindflayer.git
