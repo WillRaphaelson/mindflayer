@@ -5,6 +5,8 @@ The Mind Flayer, also known as the Shadow Monster, is a malevolent entity that r
 
 This code trains markov models on your organizations public slack messages and provides a simple CLI for posting to a channel.
 
+<img src="https://github.com/WillRaphaelson/mindflayer/blob/master/screenshot.png">
+
 ## Installation
 ```
 git clone git@github.com:WillRaphaelson/mindflayer.git
