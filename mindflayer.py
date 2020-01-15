@@ -16,25 +16,25 @@ SLACK_APP_TOKEN = config.SLACK_APP_TOKEN
 TEST_ENV = config.TEST_ENV
 PROD_ENV = config.PROD_ENV
 
-def get_users():
+def get_users(bot_token):
     # print("Getting active user list")
-    sc = slackclient.SlackClient(SLACK_BOT_TOKEN)
+    sc = slackclient.SlackClient(bot_token)
     r = sc.api_call("users.list")["members"]
     users = {x["id"]:re.sub(r'([^\s\w]|_)+', '', x["profile"]["real_name"]) for x in r if not x["deleted"]}
     return users
 
 
-def get_channels():
+def get_channels(bot_token):
     print("Getting public channel list")
-    sc = slackclient.SlackClient(SLACK_BOT_TOKEN)
+    sc = slackclient.SlackClient(bot_token)
     raw_channel_list = sc.api_call("channels.list")
     channels = [(x["id"], x["name"]) for x in raw_channel_list["channels"] if not x["is_archived"]]
     return channels
 
 
-def scrape_channels(channels, n=7):
+def scrape_channels(app_token, channels, n=7):
     print(f"Scraping last {n} days")
-    sc = slackclient.SlackClient(SLACK_APP_TOKEN)
+    sc = slackclient.SlackClient(app_token)
     oldest = datetime.datetime.now() - datetime.timedelta(days=int(n))
     oldest = datetime.datetime.timestamp(oldest)
     no_messages_list = []
@@ -143,14 +143,16 @@ def make_sentences(users, user=None):
     no_models_list = []
     for i in range(1000):
         model_name = random.choice(models)
+        print(model_name)
         user_full = users[model_name.split(".")[0]]
+        tag_name = re.search(r"(.*)\.json", model_name).group(1)
         try:
             # print(model_name)
             with open(f"models/{model_name}", "rb") as model_file:
                 model = pickle.load(model_file)
                 sentance = model.make_sentence()
                 if sentance:
-                    potench[i] = [user_full, sentance]
+                    potench[i] = [user_full, sentance, tag_name]
         except Exception as e:
             no_models_list.append(user_full)
             pass
@@ -171,8 +173,9 @@ def review_posts(candidate_posts):
                 if reply[0] == 'y':
                     post_user = candidate_posts[post][0]
                     post_text = candidate_posts[post][1]
+                    tag_name = candidate_posts[post][2]
                     print("\n")
-                    return post_user, post_text
+                    return post_user, post_text, tag_name
                 else:
                     print("\n")
             except IndexError as e:
@@ -182,16 +185,17 @@ def review_posts(candidate_posts):
 
 
 
-def post(env, post_user, post_text):
+def post(bot_token ,env, tag_name, post_text):
     print("Posting to channel")
     print("Response:")
-    sc = slackclient.SlackClient(SLACK_BOT_TOKEN)
-    message_text = "*{}*\n{}".format(post_user, post_text)
+    sc = slackclient.SlackClient(bot_token)
+    message_text = "<@{}>\n{}".format(tag_name, post_text)
     message_color = "#{}".format(hex(random.randint(0, 0xffffff))[2:])
 
 
     resp = sc.api_call(
         "chat.postMessage",
+        link_names=1,
         channel=env,
         attachments=[{'text': message_text, 'color': message_color}],
         as_user = True
@@ -200,8 +204,26 @@ def post(env, post_user, post_text):
     print(resp)
 
 
+def post_arbitrary(bot_token ,env, post_text):
+    print("Posting to channel")
+    print("Response:")
+    sc = slackclient.SlackClient(bot_token)
+    message_text = post_text
+    message_color = "#{}".format(hex(random.randint(0, 0xffffff))[2:])
+
+
+    resp = sc.api_call(
+        "chat.postMessage",
+        link_names=1,
+        channel=env,
+        attachments=[{'text': message_text, 'color': message_color}],
+        as_user = True
+        )
+
+    print(resp)
+
 def main():
-    users = get_users()
+    users = get_users(bot_token=SLACK_BOT_TOKEN)
     user_id_help = "\n".join([f"{x}: {v}" for v,x in users.items()])
     user_id_help = "Takes a user id from the following list: \n" + user_id_help
 
@@ -215,13 +237,18 @@ def main():
     parser_post.add_argument('-e','--env', help='test or prod', required=True, choices=['test', 'prod'])
     parser_post.add_argument('-u','--user', help=user_id_help, required=False, default=None)
 
+    parser_post = subparser.add_parser("post-arbitrary")
+    parser_post.add_argument('-e','--env', help='test or prod', required=True, choices=['test', 'prod'])
+    # parser_post.add_argument('-u','--user', help=user_id_help, required=False, default=None)
+    parser_post.add_argument('-m','--mssg', help='your mssg', required=True)
+
     args = vars(parser.parse_args())
 
     if args["command"] == "train":
         num_days_back = args['num']
-        channels = get_channels()
-        scrape_channels(channels=channels ,n=num_days_back)
-        dedupe_channel_histories(channels=channels)
+        channels = get_channels(bot_token=SLACK_BOT_TOKEN)
+        scrape_channels(channels=channels, n=num_days_back)
+        dedupe_channel_histories(app_token=SLACK_APP_TOKEN,channels=channels)
         truncate_user_histories(users=users)
         populate_user_histories(users=users)
         create_markov_models(users=users)
@@ -234,8 +261,18 @@ def main():
         if env == 'prod':
             slack_chan = PROD_ENV
         candidates = make_sentences(users=users, user=user)
-        chosen_post_user, chosen_post_text = review_posts(candidate_posts=candidates)
-        post(env=slack_chan, post_user=chosen_post_user, post_text=chosen_post_text)
+        # print(users)
+        chosen_post_user, chosen_post_text, tag_name = review_posts(candidate_posts=candidates)
+        post(bot_token=SLACK_BOT_TOKEN ,env=slack_chan, tag_name=tag_name, post_text=chosen_post_text)
+
+    if args["command"] == "post-arbitrary":
+        env = args['env']
+        post_text = args["mssg"]
+        if env == 'test':
+            slack_chan = TEST_ENV
+        if env == 'prod':
+            slack_chan = PROD_ENV
+        post_arbitrary(bot_token=SLACK_BOT_TOKEN ,env=slack_chan, post_text=post_text)
 
 
 if __name__ == '__main__':
