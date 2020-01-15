@@ -304,17 +304,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-sc = slackclient.SlackClient("xoxb-376192911538-715399492213-G2Mcn2y1t7VrgnTKyDz9MVT6")
-
-resp = sc.api_call(
-    "chat.delete",
-    channel="CBHJ17SVC",
-    ts="1579107857.148700"
-    )
-
-print(resp)
