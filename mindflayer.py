@@ -144,7 +144,6 @@ def make_sentences(users, user=None):
     no_models_list = []
     for i in range(1000):
         model_name = random.choice(models)
-        print(model_name)
         user_full = users[model_name.split(".")[0]]
         tag_name = re.search(r"(.*)\.json", model_name).group(1)
         try:
@@ -264,7 +263,6 @@ def main():
         if env == 'prod':
             slack_chan = PROD_ENV
         candidates = make_sentences(users=users, user=user)
-        # print(users)
         chosen_post_user, chosen_post_text, tag_name = review_posts(candidate_posts=candidates)
         post(bot_token=SLACK_BOT_TOKEN ,env=slack_chan, tag_name=tag_name, post_text=chosen_post_text)
 
