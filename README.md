@@ -69,3 +69,14 @@ To generate and post sentences for a specific user, provide the optional `--user
 ```
 python mindflayer.py post --env test --user UBGGK785R
 ```
+
+To generate and post sentences from the mindflayer itself, user the `post-arbitrary` argument followed by the `--env` and `--mssg` arguments
+
+| WARNING: only post messages from the mindflayer when it is hella funny |
+| --- |
+
+```
+python mindflayer.py post-arbitrary 
+--env test 
+--mssg "okay b4 the holiday party do any1 wanna admit they got a crush on me"
+```
