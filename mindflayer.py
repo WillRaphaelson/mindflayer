@@ -224,6 +224,19 @@ def post_arbitrary(bot_token ,env, post_text):
 
     print(resp)
 
+def delete_mssg(bot_token ,env, ts):
+    sc = slackclient.SlackClient(bot_token)
+    print(f"Deleting message with timestamp: {str(ts)}")
+    print("Response:")
+    resp = sc.api_call(
+        "chat.delete",
+        channel=env,
+        ts=str(ts)
+        )
+    print(resp)
+
+
+
 def main():
     users = get_users(bot_token=SLACK_BOT_TOKEN)
     user_id_help = "\n".join([f"{x}: {v}" for v,x in users.items()])
@@ -244,13 +257,18 @@ def main():
     # parser_post.add_argument('-u','--user', help=user_id_help, required=False, default=None)
     parser_post.add_argument('-m','--mssg', help='your mssg', required=True)
 
+    parser_post = subparser.add_parser("delete-post")
+    parser_post.add_argument('-e','--env', help='test or prod', required=True, choices=['test', 'prod'])
+    # parser_post.add_argument('-u','--user', help=user_id_help, required=False, default=None)
+    parser_post.add_argument('-t','--ts', help='timestamp of mssg to be deleted', required=True)
+
     args = vars(parser.parse_args())
 
     if args["command"] == "train":
         num_days_back = args['num']
         channels = get_channels(bot_token=SLACK_BOT_TOKEN)
-        scrape_channels(channels=channels, n=num_days_back)
-        dedupe_channel_histories(app_token=SLACK_APP_TOKEN,channels=channels)
+        scrape_channels(app_token=SLACK_APP_TOKEN, channels=channels, n=num_days_back)
+        dedupe_channel_histories(channels=channels)
         truncate_user_histories(users=users)
         populate_user_histories(users=users)
         create_markov_models(users=users)
@@ -275,6 +293,28 @@ def main():
             slack_chan = PROD_ENV
         post_arbitrary(bot_token=SLACK_BOT_TOKEN ,env=slack_chan, post_text=post_text)
 
+    if args["command"] == "delete-post":
+        ts = str(args['ts'])
+        if env == 'test':
+            slack_chan = TEST_ENV
+        if env == 'prod':
+            slack_chan = PROD_ENV
+        delete_mssg(bot_token=SLACK_BOT_TOKEN ,env=slack_chan, ts=ts)
+
 
 if __name__ == '__main__':
     main()
+
+
+
+
+
+sc = slackclient.SlackClient("xoxb-376192911538-715399492213-G2Mcn2y1t7VrgnTKyDz9MVT6")
+
+resp = sc.api_call(
+    "chat.delete",
+    channel="CBHJ17SVC",
+    ts="1579107857.148700"
+    )
+
+print(resp)
