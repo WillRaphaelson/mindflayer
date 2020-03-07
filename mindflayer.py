@@ -1,7 +1,7 @@
-# TODO: make the trying and required scopes thing more elegant.
-# Maybe just have a validation function up top? <- do that
-# returns after auth error are really wack
-# swap out
+# Maybe just have a validation function up top to confirm required scopes? <- do that
+# possibly distribute for installation?
+
+
 
 import slackclient
 import os
