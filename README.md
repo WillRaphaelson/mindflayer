@@ -21,8 +21,8 @@ pip install -r requirements.txt
 Create an app in your workspace at https://api.slack.com/apps, and add in the following app and user scopes.
 
 Bot Token Scopes:
-| Tables        | Description   |
-| ------------- |:-------------:|
+| Scope        | Description   |
+| ------------- |-------------|
 | channels:join      | Join public channels in the workspace|
 | channels:read      | View basic information about public channels in the workspace| 
 | chat:write | Send messages as @mindflayer| 
