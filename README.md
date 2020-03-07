@@ -20,19 +20,17 @@ pip install -r requirements.txt
 
 Create an app in your workspace at https://api.slack.com/apps, and add in the following app and user scopes.
 
-Bot Token Scopes
-channels:join
-Join public channels in the workspace
-channels:read
-View basic information about public channels in the workspace
-chat:write
-Send messages as @mindflayer
-chat:write.public
-Send messages to channels @mindflayer isn't a member of
-groups:history
-View messages and other content in private channels that Mindflayer has been added to
-users:read
-View people in the workspace
+Bot Token Scopes:
+| Tables        | Description   |
+| ------------- |:-------------:|
+| channels:join      | Join public channels in the workspace|
+| channels:read      | View basic information about public channels in the workspace| 
+| chat:write | Send messages as @mindflayer| 
+| chat:write.public | Send messages to channels @mindflayer isn't a member of| 
+| groups:history | View messages and other content in private channels that Mindflayer has been added to| 
+| users:read | View people in the workspace      | 
+
+
 
 User Token Scopes
 channels:history
