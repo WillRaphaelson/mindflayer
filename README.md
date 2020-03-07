@@ -20,7 +20,8 @@ pip install -r requirements.txt
 
 Create an app in your workspace at https://api.slack.com/apps, and add in the following app and user scopes.
 
-Bot Token Scopes:
+Bot Token Scopes
+
 | Scope        | Description   |
 | ------------- |-------------|
 | channels:join      | Join public channels in the workspace|
@@ -31,18 +32,16 @@ Bot Token Scopes:
 | users:read | View people in the workspace      | 
 
 
-
 User Token Scopes
-channels:history
-View messages and other content in the user’s public channels
-channels:read
-View basic information about public channels in the workspace
-channels:write
-Manage the user’s public channels and create new ones on the user’s behalf
-chat:write
-Send messages on the user’s behalf
-users:read
-View people in the workspace
+
+| Scope        | Description   |
+| ------------- |-------------|
+| channels:history     | View messages and other content in the user’s public channels|
+| channels:read      | View basic information about public channels in the workspace| 
+| channels:write | Manage the user’s public channels and create new ones on the user’s behalf| 
+| chat:write | Send messages on the user’s behalf| 
+| users:read | View people in the workspace| 
+
 
 Install the application, and securely store the OAuth Access Token and Bot User OAuth Access Token for use in the config file detailed below.
 
