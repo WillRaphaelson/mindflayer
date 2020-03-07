@@ -1,3 +1,8 @@
+# TODO: make the trying and required scopes thing more elegant.
+# Maybe just have a validation function up top? <- do that
+# returns after auth error are really wack
+# swap out
+
 import slackclient
 import os
 import time
@@ -20,7 +25,14 @@ PROD_ENV = config.PROD_ENV
 def get_users(bot_token):
     # print("Getting active user list")
     sc = slackclient.SlackClient(bot_token)
-    r = sc.api_call("users.list")["members"]
+    try:
+        r = sc.api_call("users.list")
+        r = sc.api_call("users.list")["members"]
+    except KeyError:
+        r = sc.api_call("users.list")
+        scope = r["needed"]
+        print(f"Missing scope: {scope}")
+        return
     users = {x["id"]:re.sub(r'([^\s\w]|_)+', '', x["profile"]["real_name"]) for x in r if not x["deleted"]}
     return users
 
@@ -29,9 +41,9 @@ def get_channels(bot_token):
     print("Getting public channel list")
     sc = slackclient.SlackClient(bot_token)
     raw_channel_list = sc.api_call("channels.list")
+    # print(raw_channel_list)
     channels = [(x["id"], x["name"]) for x in raw_channel_list["channels"] if not x["is_archived"]]
     return channels
-
 
 def scrape_channels(app_token, channels, n=7):
     print(f"Scraping last {n} days")
@@ -246,7 +258,7 @@ def main():
     subparser = parser.add_subparsers(dest="command")
 
     parser_train = subparser.add_parser("train")
-    parser_train.add_argument('-n','--num', help='num days back to train', required=True, choices=['1','2','3','4','5','6','7'])
+    parser_train.add_argument('-n','--num', help='num days back to train', required=True, choices=['1','2','3','4','5','6','7','200'])
 
     parser_post = subparser.add_parser("post")
     parser_post.add_argument('-e','--env', help='test or prod', required=True, choices=['test', 'prod'])
