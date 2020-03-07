@@ -48,6 +48,7 @@ Install the application, and securely store the OAuth Access Token and Bot User 
 ### Local
 
 **config.py**
+
 A `config.py` file in the top level directory will provide key configuration variables. The slack bot and app token are take from the app's permissions page in Slack.
 
 ```
@@ -58,6 +59,7 @@ PROD_ENV = "CBHJ17SVC"
 ```
 
 **subdirectories**
+
 Subdirectory structure and contents are important:
 
 ```
