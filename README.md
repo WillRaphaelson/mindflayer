@@ -16,11 +16,11 @@ pip install -r requirements.txt
 
 ## Configuration
 
-### Slack-side configuration
+### Slack-side
 
 Create an app in your workspace at https://api.slack.com/apps, and add in the following app and user scopes.
 
-Bot Token Scopes
+**Bot Token Scopes**
 
 | Scope        | Description   |
 | ------------- |-------------|
@@ -32,7 +32,7 @@ Bot Token Scopes
 | users:read | View people in the workspace      | 
 
 
-User Token Scopes
+**User Token Scopes**
 
 | Scope        | Description   |
 | ------------- |-------------|
@@ -45,8 +45,9 @@ User Token Scopes
 
 Install the application, and securely store the OAuth Access Token and Bot User OAuth Access Token for use in the config file detailed below.
 
+### Local
 
-### config.py
+**config.py**
 A `config.py` file in the top level directory will provide key configuration variables. The slack bot and app token are take from the app's permissions page in Slack.
 
 ```
@@ -56,7 +57,7 @@ TEST_ENV = "GS6CFBN5N"
 PROD_ENV = "CBHJ17SVC"
 ```
 
-### subdirectories
+**subdirectories**
 Subdirectory structure and contents are important:
 
 ```
