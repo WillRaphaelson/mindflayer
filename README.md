@@ -15,10 +15,41 @@ pip install -r requirements.txt
 ```
 
 ## Configuration
-The following files cannot be checked in to git for privacy and security reasons. Contact the maintainers for access.
 
-### config.py
-A `config.py` file in the top level directory will provide key configuration variables:
+### Slack-side
+
+Create an app in your workspace at https://api.slack.com/apps, and add in the following app and user scopes.
+
+**Bot Token Scopes**
+
+| Scope        | Description   |
+| ------------- |-------------|
+| channels:join      | Join public channels in the workspace|
+| channels:read      | View basic information about public channels in the workspace| 
+| chat:write | Send messages as @mindflayer| 
+| chat:write.public | Send messages to channels @mindflayer isn't a member of| 
+| groups:history | View messages and other content in private channels that Mindflayer has been added to| 
+| users:read | View people in the workspace      | 
+
+
+**User Token Scopes**
+
+| Scope        | Description   |
+| ------------- |-------------|
+| channels:history     | View messages and other content in the user’s public channels|
+| channels:read      | View basic information about public channels in the workspace| 
+| channels:write | Manage the user’s public channels and create new ones on the user’s behalf| 
+| chat:write | Send messages on the user’s behalf| 
+| users:read | View people in the workspace| 
+
+
+Install the application, and securely store the OAuth Access Token and Bot User OAuth Access Token for use in the config file detailed below.
+
+### Local
+
+**config.py**
+
+A `config.py` file in the top level directory will provide key configuration variables. The slack bot and app token are take from the app's permissions page in Slack.
 
 ```
 SLACK_BOT_TOKEN = "xxxx-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
@@ -27,7 +58,8 @@ TEST_ENV = "GS6CFBN5N"
 PROD_ENV = "CBHJ17SVC"
 ```
 
-### subdirectories
+**subdirectories**
+
 Subdirectory structure and contents are important:
 
 ```
@@ -44,7 +76,6 @@ Subdirectory structure and contents are important:
   │   └── ...
   └── ...
 ```
-
 
 ## Usage
 The `train` command will scrape, parse, and train new models based on data from the last `num` days.
