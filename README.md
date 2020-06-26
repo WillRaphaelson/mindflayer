@@ -25,25 +25,17 @@ Create an app in your workspace at https://api.slack.com/apps, and add in the fo
 | Scope        | Description   |
 | ------------- |-------------|
 | channels:join      | Join public channels in the workspace|
-| channels:read      | View basic information about public channels in the workspace| 
-| chat:write | Send messages as @mindflayer| 
-| chat:write.public | Send messages to channels @mindflayer isn't a member of| 
-| groups:history | View messages and other content in private channels that Mindflayer has been added to| 
-| users:read | View people in the workspace      | 
+| channels:manage      | Manage public channels that Mindflayer has been added to and create new ones|
+| channels:read      | View basic information about public channels in the workspace|
+| chat:write | Send messages as @mindflayer|
+| chat:write.public | Send messages to channels @mindflayer isn't a member of|
+| groups:history | View messages and other content in private channels that Mindflayer has been added to|
+| groups:write | Manage private channels that Mindflayer has been added to and create new ones|
+| im:write | Start direct messages with people |
+| mpim:write | Start group direct messages with people |
+| users:read | View people in the workspace      |
 
-
-**User Token Scopes**
-
-| Scope        | Description   |
-| ------------- |-------------|
-| channels:history     | View messages and other content in the user’s public channels|
-| channels:read      | View basic information about public channels in the workspace| 
-| channels:write | Manage the user’s public channels and create new ones on the user’s behalf| 
-| chat:write | Send messages on the user’s behalf| 
-| users:read | View people in the workspace| 
-
-
-Install the application, and securely store the OAuth Access Token and Bot User OAuth Access Token for use in the config file detailed below.
+Install the application, and securely store the Bot User OAuth Access Token for use in the config file detailed below.
 
 ### Local
 
@@ -53,7 +45,6 @@ A `config.py` file in the top level directory will provide key configuration var
 
 ```
 SLACK_BOT_TOKEN = "xxxx-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
-SLACK_APP_TOKEN = "xxxx-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 TEST_ENV = "GS6CFBN5N"
 PROD_ENV = "CBHJ17SVC"
 ```
@@ -107,7 +98,7 @@ To generate and post sentences from the mindflayer itself, user the `post-arbitr
 | --- |
 
 ```
-python mindflayer.py post-arbitrary 
---env test 
+python mindflayer.py post-arbitrary
+--env test
 --mssg "okay b4 the holiday party do any1 wanna admit they got a crush on me"
 ```

@@ -1,7 +1,6 @@
 # Maybe just have a validation function up top to confirm required scopes? <- do that
 # possibly distribute for installation?
-
-
+# different workspaces?
 
 import slackclient
 import os
@@ -18,7 +17,6 @@ import sys
 
 import config
 SLACK_BOT_TOKEN = config.SLACK_BOT_TOKEN
-SLACK_APP_TOKEN = config.SLACK_APP_TOKEN
 TEST_ENV = config.TEST_ENV
 PROD_ENV = config.PROD_ENV
 
@@ -206,7 +204,6 @@ def post(bot_token ,env, tag_name, post_text):
     message_text = "<@{}>\n{}".format(tag_name, post_text)
     message_color = "#{}".format(hex(random.randint(0, 0xffffff))[2:])
 
-
     resp = sc.api_call(
         "chat.postMessage",
         link_names=1,
@@ -217,6 +214,15 @@ def post(bot_token ,env, tag_name, post_text):
 
     print(resp)
 
+    resp = sc.api_call(
+        "conversations.invite",
+        link_names=1,
+        channel=env,
+        users=[tag_name],
+        as_user = True
+        )
+
+    print(resp)
 
 def post_arbitrary(bot_token ,env, post_text):
     print("Posting to channel")
@@ -236,6 +242,7 @@ def post_arbitrary(bot_token ,env, post_text):
 
     print(resp)
 
+
 def delete_mssg(bot_token ,env, ts):
     sc = slackclient.SlackClient(bot_token)
     print(f"Deleting message with timestamp: {str(ts)}")
@@ -248,7 +255,7 @@ def delete_mssg(bot_token ,env, ts):
     print(resp)
 
 
-
+# @Gooey
 def main():
     users = get_users(bot_token=SLACK_BOT_TOKEN)
     user_id_help = "\n".join([f"{x}: {v}" for v,x in users.items()])
@@ -279,7 +286,7 @@ def main():
     if args["command"] == "train":
         num_days_back = args['num']
         channels = get_channels(bot_token=SLACK_BOT_TOKEN)
-        scrape_channels(app_token=SLACK_APP_TOKEN, channels=channels, n=num_days_back)
+        scrape_channels(app_token=SLACK_BOT_TOKEN, channels=channels, n=num_days_back)
         dedupe_channel_histories(channels=channels)
         truncate_user_histories(users=users)
         populate_user_histories(users=users)
