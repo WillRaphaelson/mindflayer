@@ -35,7 +35,7 @@ Create an app in your workspace at https://api.slack.com/apps, and add in the fo
 | mpim:write | Start group direct messages with people |
 | users:read | View people in the workspace      |
 
-Install the application, and securely store the Bot User OAuth Access Token for use in the config file detailed below.
+Install the application, and securely store the Bot And User OAuth Access Token for use in the config file detailed below.
 
 ### Local
 
@@ -64,7 +64,7 @@ Subdirectory structure and contents are important:
   │   └── ...
   ├── models                 # json files of pickled markov models
   │   ├── U001.json         
-  │   └── ...
+  │   └── ...∑
   └── ...
 ```
 

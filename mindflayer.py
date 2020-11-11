@@ -17,6 +17,7 @@ import sys
 
 import config
 SLACK_BOT_TOKEN = config.SLACK_BOT_TOKEN
+SLACK_USER_TOKEN = config.SLACK_USER_TOKEN
 TEST_ENV = config.TEST_ENV
 PROD_ENV = config.PROD_ENV
 
@@ -41,6 +42,7 @@ def get_channels(bot_token):
     raw_channel_list = sc.api_call("channels.list")
     # print(raw_channel_list)
     channels = [(x["id"], x["name"]) for x in raw_channel_list["channels"] if not x["is_archived"]]
+    # print(f"channels list: {channels}")
     return channels
 
 def scrape_channels(app_token, channels, n=7):
@@ -54,6 +56,7 @@ def scrape_channels(app_token, channels, n=7):
             # print(f"Ingesting {channel[1]}")
             # grab and make unique
             h = sc.api_call("channels.history", channel = channel[0], oldest = oldest)["messages"]
+            # print(h)
             d = pd.DataFrame.from_dict(h)
             d = d[["user","text"]]
             with open(f"channels/{channel[1]}.csv", 'a') as f:
@@ -285,7 +288,7 @@ def main():
 
     if args["command"] == "train":
         num_days_back = args['num']
-        channels = get_channels(bot_token=SLACK_BOT_TOKEN)
+        channels = get_channels(bot_token=SLACK_USER_TOKEN)
         scrape_channels(app_token=SLACK_BOT_TOKEN, channels=channels, n=num_days_back)
         dedupe_channel_histories(channels=channels)
         truncate_user_histories(users=users)
@@ -301,7 +304,7 @@ def main():
             slack_chan = PROD_ENV
         candidates = make_sentences(users=users, user=user)
         chosen_post_user, chosen_post_text, tag_name = review_posts(candidate_posts=candidates)
-        post(bot_token=SLACK_BOT_TOKEN ,env=slack_chan, tag_name=tag_name, post_text=chosen_post_text)
+        post(bot_token=SLACK_USER_TOKEN ,env=slack_chan, tag_name=tag_name, post_text=chosen_post_text)
 
     if args["command"] == "post-arbitrary":
         env = args['env']
@@ -310,7 +313,7 @@ def main():
             slack_chan = TEST_ENV
         if env == 'prod':
             slack_chan = PROD_ENV
-        post_arbitrary(bot_token=SLACK_BOT_TOKEN ,env=slack_chan, post_text=post_text)
+        post_arbitrary(bot_token=SLACK_USER_TOKEN ,env=slack_chan, post_text=post_text)
 
     if args["command"] == "delete-post":
         ts = str(args['ts'])
