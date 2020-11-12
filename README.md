@@ -35,6 +35,9 @@ Create an app in your workspace at https://api.slack.com/apps, and add in the fo
 | mpim:write | Start group direct messages with people |
 | users:read | View people in the workspace      |
 
+**User Token Scopes**
+| channels:history | View messages and other content in a user’s public channels      |
+
 Install the application, and securely store the Bot And User OAuth Access Token for use in the config file detailed below.
 
 ### Local
