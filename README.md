@@ -50,6 +50,7 @@ A `config.py` file in the top level directory will provide key configuration var
 
 ```
 SLACK_BOT_TOKEN = "xxxx-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+SLACK_USER_TOKEN = "xxxx-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
 TEST_ENV = "GS6CFBN5N"
 PROD_ENV = "CBHJ17SVC"
 ```
