@@ -36,9 +36,11 @@ Create an app in your workspace at https://api.slack.com/apps, and add in the fo
 | users:read | View people in the workspace      |
 
 **User Token Scopes**
+| Scope        | Description   |
+| ------------- |-------------|
 | channels:history | View messages and other content in a user’s public channels      |
 
-Install the application, and securely store the Bot And User OAuth Access Token for use in the config file detailed below.
+Install the application, and securely store the Bot And User OAuth Access Tokens for use in the config file detailed below.
 
 ### Local
 
